@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Kickers & Punters 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'roboto': ['Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Roboto', sans-serif !important; }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        select::-webkit-scrollbar { width: 8px; }
+        select::-webkit-scrollbar-track { background: #4f46e5; }
+        select::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 4px; }
+        select::-webkit-scrollbar-thumb:hover { background: #6d28d9; }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #1f2937;
+            color: #e5e7eb;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 13px;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+        th .tooltip { pointer-events: none; }
+        
+        /* Medal glow effects */
+        .gold-card {
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .gold-card:hover {
+            border: 2px solid #FFA500;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+        .silver-card {
+            border: 2px solid #C0C0C0;
+            box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
+            transition: all 0.3s ease;
+        }
+        .silver-card:hover {
+            border: 2px solid #A9A9A9;
+            box-shadow: 0 0 30px rgba(192, 192, 192, 0.6);
+        }
+        .bronze-card {
+            border: 2px solid #CD7F32;
+            box-shadow: 0 0 20px rgba(205, 127, 50, 0.3);
+            transition: all 0.3s ease;
+        }
+        .bronze-card:hover {
+            border: 2px solid #B5651D;
+            box-shadow: 0 0 30px rgba(205, 127, 50, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+
+        // ESPN team logo map (abbrev to URL)
+        const teamLogos = {
+            'ARI': 'https://a.espncdn.com/i/teamlogos/nfl/500/ari.png',
+            'ATL': 'https://a.espncdn.com/i/teamlogos/nfl/500/atl.png',
+            'BAL': 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png',
+            'BUF': 'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png',
+            'CAR': 'https://a.espncdn.com/i/teamlogos/nfl/500/car.png',
+            'CHI': 'https://a.espncdn.com/i/teamlogos/nfl/500/chi.png',
+            'CIN': 'https://a.espncdn.com/i/teamlogos/nfl/500/cin.png',
+            'CLE': 'https://a.espncdn.com/i/teamlogos/nfl/500/cle.png',
+            'DAL': 'https://a.espncdn.com/i/teamlogos/nfl/500/dal.png',
+            'DEN': 'https://a.espncdn.com/i/teamlogos/nfl/500/den.png',
+            'DET': 'https://a.espncdn.com/i/teamlogos/nfl/500/det.png',
+            'GB': 'https://a.espncdn.com/i/teamlogos/nfl/500/gb.png',
+            'HOU': 'https://a.espncdn.com/i/teamlogos/nfl/500/hou.png',
+            'IND': 'https://a.espncdn.com/i/teamlogos/nfl/500/ind.png',
+            'JAX': 'https://a.espncdn.com/i/teamlogos/nfl/500/jax.png',
+            'KC': 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png',
+            'LV': 'https://a.espncdn.com/i/teamlogos/nfl/500/lv.png',
+            'LAC': 'https://a.espncdn.com/i/teamlogos/nfl/500/lac.png',
+            'LAR': 'https://a.espncdn.com/i/teamlogos/nfl/500/lar.png',
+            'MIA': 'https://a.espncdn.com/i/teamlogos/nfl/500/mia.png',
+            'MIN': 'https://a.espncdn.com/i/teamlogos/nfl/500/min.png',
+            'NE': 'https://a.espncdn.com/i/teamlogos/nfl/500/ne.png',
+            'NO': 'https://a.espncdn.com/i/teamlogos/nfl/500/no.png',
+            'NYG': 'https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png',
+            'NYJ': 'https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png',
+            'PHI': 'https://a.espncdn.com/i/teamlogos/nfl/500/phi.png',
+            'PIT': 'https://a.espncdn.com/i/teamlogos/nfl/500/pit.png',
+            'SEA': 'https://a.espncdn.com/i/teamlogos/nfl/500/sea.png',
+            'SF': 'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png',
+            'TB': 'https://a.espncdn.com/i/teamlogos/nfl/500/tb.png',
+            'TEN': 'https://a.espncdn.com/i/teamlogos/nfl/500/ten.png',
+            'WAS': 'https://a.espncdn.com/i/teamlogos/nfl/500/was.png'
+        };
+
+        const getTeamLogo = (teamAbbrev) => {
+            if (teamAbbrev === 'LA') return teamLogos['LAR'];
+            return teamLogos[teamAbbrev] || '';
+        };
+
+        // Load and filter raw data for specific week
+        const loadAndFilterData = (rawData, weekFilter) => {
+            return rawData
+                .filter(row => row.week && row.week !== 'undefined' && row.week !== '')
+                .filter(row => String(row.week) === weekFilter)
+                .map(row => ({
+                    ...row,
+                    week: String(row.week),
+                    player_name: row.kicker_player_name || row.punter_player_name
+                }));
+        };
+
+        const aggregateTeamData = (filteredData) => {
+            const teamData = {};
+            
+            filteredData.forEach(row => {
+                const key = row.posteam;
+                if (!teamData[key]) {
+                    teamData[key] = {
+                        posteam: row.posteam,
+                        kick_points: 0,
+                        punt_points: 0,
+                        total_points: 0,
+                        kickers: {},
+                        punters: {}
+                    };
+                }
+
+                // Calculate points
+                if (row.play_type === 'field_goal' && row.field_goal_result === 'made') {
+                    teamData[key].kick_points += 3;
+                    teamData[key].total_points += 3;
+                } else if (row.play_type === 'extra_point' && row.extra_point_result === 'good') {
+                    teamData[key].kick_points += 1;
+                    teamData[key].total_points += 1;
+                }
+
+                // Track kickers (field goals and extra points)
+                if ((row.play_type === 'field_goal' || row.play_type === 'extra_point') && row.kicker_player_name && row.kick_distance) {
+                    const kickerName = row.kicker_player_name;
+                    if (!teamData[key].kickers[kickerName]) {
+                        teamData[key].kickers[kickerName] = { distances: [] };
+                    }
+                    teamData[key].kickers[kickerName].distances.push(parseFloat(row.kick_distance));
+                }
+
+                // Track punters
+                if (row.play_type === 'punt' && row.punter_player_name && row.kick_distance) {
+                    const punterName = row.punter_player_name;
+                    if (!teamData[key].punters[punterName]) {
+                        teamData[key].punters[punterName] = { distances: [] };
+                    }
+                    teamData[key].punters[punterName].distances.push(parseFloat(row.kick_distance));
+                }
+            });
+
+            return Object.values(teamData)
+                .filter(item => Object.keys(item.kickers).length > 0 || Object.keys(item.punters).length > 0)
+                .map(item => {
+                    const kickPlayersStr = Object.entries(item.kickers)
+                        .map(([name, data]) => `${name} (${data.distances.join(', ')})`).join(', ') || '-';
+                    
+                    const puntPlayersStr = Object.entries(item.punters)
+                        .map(([name, data]) => `${name} (${data.distances.join(', ')})`).join(', ') || '-';
+
+                    return {
+                        posteam: item.posteam,
+                        kick_points: item.kick_points,
+                        punt_points: item.punt_points,
+                        total_points: item.total_points,
+                        kick_players: kickPlayersStr,
+                        punt_players: puntPlayersStr
+                    };
+                });
+        };
+
+        // Always sort by total_points descending
+        const sortDataByTotalPoints = (data) => {
+            return [...data].sort((a, b) => parseFloat(b.total_points) - parseFloat(a.total_points));
+        };
+
+        const TopTeams = ({ topTeams }) => {
+            if (!topTeams.length) return null;
+            return (
+                <div className="mb-6">
+                    <div className="flex flex-col md:flex-row gap-6 justify-center">
+                        {topTeams.map((team, idx) => {
+                            const cardClass = idx === 0 ? 'gold-card' : 
+                                            idx === 1 ? 'silver-card' : 
+                                            'bronze-card';
+                            return (
+                                <div key={idx} className={`relative bg-gray-800 rounded-xl p-6 w-full md:w-[450px] shadow-xl ${cardClass}`}>
+                                    <div className="flex flex-col items-center space-y-6">
+                                        {/* Logo and Points side by side, centered */}
+                                        <div className="flex items-center justify-center gap-6">
+                                            <img src={getTeamLogo(team.posteam)} alt={team.posteam} className="w-32 h-32 flex-shrink-0" />
+                                            <div className="text-center">
+                                                <div className="text-8xl font-thin leading-none tracking-wider text-purple-400">
+                                                    {team.total_points}
+                                                </div>
+                                                <div className="text-base text-gray-400 uppercase tracking-wide font-light">PTS</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="w-full space-y-3">
+                                            <div className="bg-gray-700 p-3 rounded-lg text-base font-medium text-center">{team.kick_players}</div>
+                                            {team.punt_players !== '-' && <div className="bg-gray-700 p-3 rounded-lg text-base font-medium text-center">{team.punt_players}</div>}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
+        const Leaderboard = ({ data }) => {
+            // Skip top 3 teams in detailed table
+            const detailData = data.slice(3);
+            
+            return (
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse bg-gray-800 rounded-xl shadow-lg">
+                        <thead>
+                            <tr className="bg-gray-700 text-purple-400">
+                                <th className="p-4 text-center font-semibold text-lg border-b-2 border-gray-600">Team</th>
+                                <th className="p-4 text-center font-semibold text-lg border-b-2 border-gray-600">Kick Points</th>
+                                <th className="p-4 text-center font-semibold text-lg border-b-2 border-gray-600">Punt Points</th>
+                                <th className="p-4 text-center font-semibold text-lg border-b-2 border-gray-600">Total Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {detailData.map((row, index) => (
+                                <tr key={row.posteam} className="hover:bg-gray-700 border-b border-gray-700">
+                                    <td className="p-4 flex justify-center items-center">
+                                        <img src={getTeamLogo(row.posteam)} alt={row.posteam} className="w-16 h-16" />
+                                    </td>
+                                    <td className="p-4 text-center">
+                                        <div className="break-words text-base font-medium tooltip inline-block">
+                                            {row.kick_players}
+                                            <span className="tooltiptext">Field Goal: 3 pts | Extra Point: 1 pt<br/>(Scoring TBD)</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-4 text-center">
+                                        <div className="break-words text-base font-medium tooltip inline-block">
+                                            {row.punt_players}
+                                            <span className="tooltiptext">Punt scoring TBD<br/>(Inside 20, net avg, etc.)</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-4 font-bold text-xl text-purple-400 text-center">{row.total_points}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [rawData, setRawData] = useState([]);
+            const [data, setData] = useState([]);
+            const [allWeeks, setAllWeeks] = useState([]);
+            const [weekFilter, setWeekFilter] = useState('7');
+            const [error, setError] = useState(null);
+            const [loading, setLoading] = useState(true);
+
+            // Load raw data once
+            useEffect(() => {
+                Papa.parse('/kp_2025.csv', {
+                    download: true,
+                    header: true,
+                    complete: (results) => {
+                        const cleanData = results.data
+                            .filter(row => row.week && row.week !== 'undefined' && row.week !== '');
+                        setRawData(cleanData);
+                        
+                        const weeks = [...new Set(cleanData.map(row => String(row.week)))].sort((a, b) => parseInt(b) - parseInt(a));
+                        setAllWeeks(weeks);
+                        
+                        const initialWeek = weeks.includes('7') ? '7' : weeks[0];
+                        setWeekFilter(initialWeek);
+                        
+                        setError(null);
+                        setLoading(false);
+                    },
+                    error: (error) => {
+                        console.error('Error loading CSV:', error);
+                        setError('Error loading data');
+                        setLoading(false);
+                    }
+                });
+            }, []);
+
+            // Filter and aggregate data when weekFilter changes
+            useEffect(() => {
+                if (rawData.length === 0) return;
+
+                const filteredData = loadAndFilterData(rawData, weekFilter);
+                const aggregated = aggregateTeamData(filteredData);
+                const sorted = sortDataByTotalPoints(aggregated);
+                setData(sorted);
+            }, [rawData, weekFilter]);
+
+            const topTeams = data.slice(0, 3);
+
+            return (
+                <div className="max-w-[1500px] mx-auto p-5">
+                    <h1 className="text-3xl md:text-4xl font-bold text-center text-purple-400 mb-8 tracking-wide">NFL Kickers & Punters 2025 Leaderboard</h1>
+                    <div className="flex justify-center mb-8">
+                        <select
+                            className="bg-purple-600 text-white border-2 border-purple-500 rounded-xl p-3 text-xl font-bold shadow-lg hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:border-purple-500 transition-all duration-200 w-[450px] text-center h-14"
+                            value={weekFilter}
+                            onChange={(e) => setWeekFilter(e.target.value)}
+                        >
+                            {allWeeks.map(week => (
+                                <option key={week} value={week} className="text-lg">Week {week}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <TopTeams topTeams={topTeams} />
+                    {loading ? (
+                        <p className="text-gray-400 text-center text-lg">Loading...</p>
+                    ) : error ? (
+                        <p className="text-red-500 text-center text-lg font-semibold">{error}</p>
+                    ) : data.length === 0 ? (
+                        <p className="text-gray-400 text-center text-lg">No data for this week</p>
+                    ) : (
+                        <Leaderboard data={data} />
+                    )}
+                </div>
+            );
+        };
+
+        const container = document.getElementById('root');
+        const root = createRoot(container);
+        root.render(<App />);
+    </script>
+</body>
+</html>
