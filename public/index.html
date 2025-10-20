@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFL Kickers & Punters 2025</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Knights of Degen NFL "Football" Fantasy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.25.9/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -16,102 +16,392 @@
                 extend: {
                     fontFamily: {
                         'roboto': ['Roboto', 'sans-serif'],
+                        'orbitron': ['Orbitron', 'monospace'],
                     }
                 }
-            }
+            },
+            darkMode: 'class',
         }
     </script>
     <style>
-        * { font-family: 'Roboto', sans-serif !important; }
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
+        body {
+            background: linear-gradient(135deg, #1e1b4b 0%, #2a1d5c 25%, #3b1f6b 50%, #4a1e7c 75%, #5a1d8d 100%);
+            background-attachment: fixed;
+            font-family: 'Roboto', sans-serif !important;
+            font-weight: 400;
         }
-        select::-webkit-scrollbar { width: 8px; }
-        select::-webkit-scrollbar-track { background: #4f46e5; }
-        select::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 4px; }
-        select::-webkit-scrollbar-thumb:hover { background: #6d28d9; }
-        .tooltip {
-            position: relative;
-            display: inline-block;
+      
+        .glass-effect {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 220px;
-            background-color: #1f2937;
-            color: #e5e7eb;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px 12px;
-            position: absolute;
-            z-index: 1000;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -110px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 13px;
-            font-family: 'Roboto', sans-serif;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            white-space: nowrap;
+      
+        /* Team logo pulse animation - Top cards */
+        .team-logo-top.pulse {
+            animation: logoPulseTop 1.2s ease-in-out infinite;
+            z-index: 10;
         }
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
+        @keyframes logoPulseTop {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+                filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0.5));
+            }
+            50% {
+                transform: scale(1.8);
+                opacity: 0.5;
+                filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0.5));
+            }
         }
-        .tooltip .tooltiptext::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #1f2937 transparent transparent transparent;
-        }
-        th .tooltip { pointer-events: none; }
         
+        /* Team logo pulse animation - Leaderboard rows (no glow) */
+        .team-logo-leaderboard.pulse {
+            animation: logoPulseLeaderboard 1.2s ease-in-out infinite;
+            z-index: 10;
+        }
+        @keyframes logoPulseLeaderboard {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+      
+        .team-logo {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
+        }
+      
+        /* Header week selector */
+        .header-week-select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 2rem 0.5rem 1rem;
+            border-radius: 0.75rem;
+            min-width: 120px;
+            font-size: 0.875rem;
+            position: relative;
+        }
+        .header-week-select:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .header-week-select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        .header-week-select::after {
+            content: '';
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid white;
+            pointer-events: none;
+        }
+        select::-webkit-scrollbar {
+            width: 8px;
+        }
+        select::-webkit-scrollbar-track {
+            background: #4f46e5;
+        }
+        select::-webkit-scrollbar-thumb {
+            background: #7c3aed;
+            border-radius: 4px;
+        }
+        select::-webkit-scrollbar-thumb:hover {
+            background: #6d28d9;
+        }
+    
+        /* Wallet address styling - Top 3 */
+        .wallet-address-top {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            word-break: break-all;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .wallet-gold {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        }
+        .wallet-silver {
+            background: linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 100%);
+        }
+        .wallet-bronze {
+            background: linear-gradient(135deg, #CD7F32 0%, #B5651D 100%);
+        }
+       
+        /* Wallet address styling - Leaderboard */
+        .wallet-address-table {
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.875rem;
+            color: white;
+            background: rgba(31, 41, 55, 0.8);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            word-break: break-all;
+            text-align: center;
+            font-weight: 400;
+        }
+    
         /* Medal glow effects */
         .gold-card {
             border: 2px solid #FFD700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.02) 50%, rgba(255, 215, 0, 0.01) 100%);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
             transition: all 0.3s ease;
+            opacity: 1;
         }
         .gold-card:hover {
-            border: 2px solid #FFA500;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            animation: goldPulse 2s infinite;
+        }
+        @keyframes goldPulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2), 0 0 30px rgba(255, 215, 0, 0.1); }
+            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2); }
         }
         .silver-card {
             border: 2px solid #C0C0C0;
-            box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.05) 0%, rgba(192, 192, 192, 0.02) 50%, rgba(192, 192, 192, 0.01) 100%);
+            box-shadow: 0 0 15px rgba(192, 192, 192, 0.2);
             transition: all 0.3s ease;
+            opacity: 1;
         }
         .silver-card:hover {
-            border: 2px solid #A9A9A9;
-            box-shadow: 0 0 30px rgba(192, 192, 192, 0.6);
+            animation: silverPulse 2s infinite;
+        }
+        @keyframes silverPulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(192, 192, 192, 0.2), 0 0 30px rgba(192, 192, 192, 0.1); }
+            50% { box-shadow: 0 0 25px rgba(192, 192, 192, 0.4), 0 0 40px rgba(192, 192, 192, 0.2); }
         }
         .bronze-card {
             border: 2px solid #CD7F32;
-            box-shadow: 0 0 20px rgba(205, 127, 50, 0.3);
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.05) 0%, rgba(205, 127, 50, 0.02) 50%, rgba(205, 127, 50, 0.01) 100%);
+            box-shadow: 0 0 15px rgba(205, 127, 50, 0.2);
             transition: all 0.3s ease;
+            opacity: 1;
         }
         .bronze-card:hover {
-            border: 2px solid #B5651D;
-            box-shadow: 0 0 30px rgba(205, 127, 50, 0.6);
+            animation: bronzePulse 2s infinite;
+        }
+        @keyframes bronzePulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(205, 127, 50, 0.2), 0 0 30px rgba(205, 127, 50, 0.1); }
+            50% { box-shadow: 0 0 25px rgba(205, 127, 50, 0.4), 0 0 40px rgba(205, 127, 50, 0.2); }
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.875rem;
+            }
+            .max-w-md {
+                max-width: 100%;
+            }
+            .header-title {
+                font-size: 1.125rem;
+            }
+            .header-tagline {
+                font-size: 0.75rem;
+            }
+            .wallet-address-top {
+                font-size: 0.875rem;
+                padding: 0.2rem 0.4rem;
+            }
+            .wallet-address-table {
+                font-size: 0.8rem;
+                padding: 0.4rem;
+            }
+            .team-logo-top.pulse {
+                animation: logoPulseTopMobile 1s ease-in-out infinite;
+            }
+            @keyframes logoPulseTopMobile {
+                0% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.5); opacity: 0.5; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            .team-logo-leaderboard.pulse {
+                animation: logoPulseLeaderboardMobile 1s ease-in-out infinite;
+            }
+            @keyframes logoPulseLeaderboardMobile {
+                0% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.3); opacity: 0.5; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+        }
+        @media (min-width: 769px) {
+            .header-title {
+                font-size: 1.5rem;
+            }
+            .header-tagline {
+                font-size: 0.875rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body class="text-gray-100">
+    <header class="glass-effect sticky top-0 z-50">
+        <div class="max-w-[1500px] mx-auto px-5 py-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 lg:gap-6">
+                <div class="flex items-start lg:items-center gap-4 lg:gap-6 w-full lg:w-auto flex-wrap lg:flex-1">
+                    <img src="https://i.ibb.co/8nDRc40/KOD-Logo-Icon-400x400.png" alt="Knights of Degen Logo" class="w-12 h-12 lg:w-16 lg:h-16 rounded-xl flex-shrink-0" loading="lazy" />
+                    <div class="flex flex-col min-w-0 flex-1">
+                        <h1 class="header-title font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-purple-400 bg-clip-text text-transparent font-orbitron leading-tight">
+                            Knights of Degen NFL "Football" Fantasy
+                        </h1>
+                        <p class="header-tagline text-purple-300 italic font-light">
+                            The most degen way to pick your fantasy kickers and punters. Long live the specialists!
+                        </p>
+                    </div>
+                </div>
+               
+                <!-- Centered Week Selector -->
+                <div class="hidden lg:flex items-center justify-center flex-shrink-0 mx-auto lg:mx-0">
+                    <select
+                        id="header-week-select"
+                        class="header-week-select appearance-none"
+                        aria-label="Select Week"
+                    >
+                        <!-- Options populated by React -->
+                    </select>
+                </div>
+               
+                <nav class="flex items-center gap-2 lg:gap-6 flex-shrink-0">
+                    <a href="/" class="text-purple-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/10">Home</a>
+                    <a href="#rules" class="text-purple-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/10">Rules</a>
+                    <a href="#" class="text-purple-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/10">Pick Teams</a>
+                    <div class="hidden md:flex items-center gap-2">
+                        <button class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-purple-500/25">
+                            <span class="flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                Connect
+                            </span>
+                        </button>
+                    </div>
+                    <button class="md:hidden w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
     <div id="root"></div>
+    <footer class="glass-effect mt-20">
+        <div class="max-w-[1500px] mx-auto px-5 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-3 mb-6">
+                        <img src="https://i.ibb.co/8nDRc40/KOD-Logo-Icon-400x400.png" alt="Knights of Degen Logo" class="w-10 h-10 rounded-xl" loading="lazy" />
+                        <h3 class="text-xl font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-purple-400 bg-clip-text text-transparent font-orbitron">
+                            Knights of Degen NFL "Football" Fantasy
+                        </h3>
+                    </div>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:scale-110 transition-transform">
+                            🕊
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:scale-110 transition-transform">
+                            💬
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:scale-110 transition-transform">
+                            📘
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-purple-300 font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Kicker Rankings</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Punter Rankings</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Scoring Rules</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Week Archive</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-purple-300 font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Disclaimer</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 mt-12 pt-8 text-center text-gray-500 text-sm">
+                <p>&copy; 2025 Knights of Degen Football. Built for the weirdos who love kickers.</p>
+            </div>
+        </div>
+    </footer>
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo, useRef } = React;
         const { createRoot } = ReactDOM;
-
-        // ESPN team logo map (abbrev to URL)
+       
+        // Mock wallet addresses - truncated format: 0xABCDE...FGHIJ
+        const topWallets = [
+            '0x1a2b3...a1b2c',
+            '0x7f8e9...5d6e7',
+            '0x2c3d4...e1f2a'
+        ];
+       
+        // Mock wallet addresses for other teams
+        const otherWallets = [
+            '0x3f4e5...f1e2d',
+            '0x8a9b0...6c7d8',
+            '0x4b5c6...2d3e4',
+            '0x9c0d1...7e8f9',
+            '0x5d6e7...3f4a5',
+            '0xa0b1c...8e9f0',
+            '0x6e7f8...4a5b6',
+            '0xb1c2d...9d0e1',
+            '0x7f8a9...5b6c7',
+            '0xc2d3e...0e1f2',
+            '0x8a9b0...6c7d8',
+            '0xd3e4f...1f2a3',
+            '0x9b0c1...7d8e9',
+            '0xe4f5a...2a3b4',
+            '0xa5b6c...8e9f0',
+            '0xf5a6b...3b4c5',
+            '0xb6c7d...9f0a1',
+            '0x0c1d2...4e5f6',
+            '0xc7d8e...5f6a7',
+            '0x1d2e3...6a7b8',
+            '0xd8e9f...7b8c9',
+            '0x2e3f4...8c9d0',
+            '0xe9f0a...9d0e1'
+        ];
+       
+        // Constants for point calculations
+        const PUNT_POINT_MULTIPLIER = 0.05;
+        const FG_POINT_MULTIPLIER = 0.1;
+        const PAT_POINT = 1;
+       
+        // ESPN team logos
         const teamLogos = {
             'ARI': 'https://a.espncdn.com/i/teamlogos/nfl/500/ari.png',
             'ATL': 'https://a.espncdn.com/i/teamlogos/nfl/500/atl.png',
@@ -146,27 +436,29 @@
             'TEN': 'https://a.espncdn.com/i/teamlogos/nfl/500/ten.png',
             'WAS': 'https://a.espncdn.com/i/teamlogos/nfl/500/was.png'
         };
-
+       
         const getTeamLogo = (teamAbbrev) => {
             if (teamAbbrev === 'LA') return teamLogos['LAR'];
-            return teamLogos[teamAbbrev] || '';
+            return teamLogos[teamAbbrev] || 'https://via.placeholder.com/64x64?text=?';
         };
-
-        // Load and filter raw data for specific week
-        const loadAndFilterData = (rawData, weekFilter) => {
-            return rawData
-                .filter(row => row.week && row.week !== 'undefined' && row.week !== '')
-                .filter(row => String(row.week) === weekFilter)
-                .map(row => ({
-                    ...row,
-                    week: String(row.week),
-                    player_name: row.kicker_player_name || row.punter_player_name
-                }));
+       
+        const getWalletAddress = (index) => {
+            if (index < 3) {
+                return topWallets[index];
+            }
+            return otherWallets[index - 3] || otherWallets[0];
         };
-
+       
+        const filterDataByWeek = (rawData, weekFilter) => {
+            return rawData.filter(row => {
+                const week = row.week;
+                return week && week !== 'undefined' && week !== '' && String(week) === weekFilter;
+            });
+        };
+       
         const aggregateTeamData = (filteredData) => {
             const teamData = {};
-            
+        
             filteredData.forEach(row => {
                 const key = row.posteam;
                 if (!teamData[key]) {
@@ -176,89 +468,253 @@
                         punt_points: 0,
                         total_points: 0,
                         kickers: {},
-                        punters: {}
+                        punters: {},
+                        longest_fg: 0,
+                        longest_punt_net: 0
                     };
                 }
-
-                // Calculate points
-                if (row.play_type === 'field_goal' && row.field_goal_result === 'made') {
-                    teamData[key].kick_points += 3;
-                    teamData[key].total_points += 3;
-                } else if (row.play_type === 'extra_point' && row.extra_point_result === 'good') {
-                    teamData[key].kick_points += 1;
-                    teamData[key].total_points += 1;
-                }
-
-                // Track kickers (field goals and extra points)
-                if ((row.play_type === 'field_goal' || row.play_type === 'extra_point') && row.kicker_player_name && row.kick_distance) {
-                    const kickerName = row.kicker_player_name;
-                    if (!teamData[key].kickers[kickerName]) {
-                        teamData[key].kickers[kickerName] = { distances: [] };
+                // Kickers
+                if (row.play_type === 'field_goal') {
+                    const result = row.field_goal_result;
+                    const dist = parseFloat(row.kick_distance);
+                    const name = row.kicker_player_name;
+                    if (result && name && !isNaN(dist)) {
+                        if (!teamData[key].kickers[name]) {
+                            teamData[key].kickers[name] = { fg_made: [], fg_missed: [], exp_good: 0, exp_missed: 0, total_kick_points: 0 };
+                        }
+                        let pts = 0;
+                        if (result === 'made') {
+                            teamData[key].kickers[name].fg_made.push(dist);
+                            pts = FG_POINT_MULTIPLIER * dist;
+                            teamData[key].longest_fg = Math.max(teamData[key].longest_fg, dist);
+                        } else {
+                            teamData[key].kickers[name].fg_missed.push(dist);
+                        }
+                        teamData[key].kickers[name].total_kick_points += pts;
+                        teamData[key].kick_points += pts;
+                        teamData[key].total_points += pts;
                     }
-                    teamData[key].kickers[kickerName].distances.push(parseFloat(row.kick_distance));
-                }
-
-                // Track punters
-                if (row.play_type === 'punt' && row.punter_player_name && row.kick_distance) {
-                    const punterName = row.punter_player_name;
-                    if (!teamData[key].punters[punterName]) {
-                        teamData[key].punters[punterName] = { distances: [] };
+                } else if (row.play_type === 'extra_point') {
+                    const result = row.extra_point_result;
+                    const name = row.kicker_player_name;
+                    if (result && name) {
+                        if (!teamData[key].kickers[name]) {
+                            teamData[key].kickers[name] = { fg_made: [], fg_missed: [], exp_good: 0, exp_missed: 0, total_kick_points: 0 };
+                        }
+                        let pts = (result === 'good') ? PAT_POINT : 0;
+                        if (result === 'good') {
+                            teamData[key].kickers[name].exp_good += 1;
+                        } else {
+                            teamData[key].kickers[name].exp_missed += 1;
+                        }
+                        teamData[key].kickers[name].total_kick_points += pts;
+                        teamData[key].kick_points += pts;
+                        teamData[key].total_points += pts;
                     }
-                    teamData[key].punters[punterName].distances.push(parseFloat(row.kick_distance));
+                }
+                // Punters
+                if (row.play_type === 'punt' && row.punter_player_name) {
+                    const gross = parseFloat(row.kick_distance);
+                    const retYds = parseFloat(row.return_yards) || 0;
+                    const yl100 = parseFloat(row.yardline_100);
+                    const blocked = parseFloat(row.punt_blocked) === 1;
+                    const tb = parseFloat(row.touchback) === 1;
+                    const quarter = row.qtr;
+                    const clock = row.time;
+                    const timestamp = `Q${quarter} ${clock}`;
+                    if (!isNaN(gross) && !isNaN(yl100)) {
+                        const name = row.punter_player_name;
+                        if (!teamData[key].punters[name]) {
+                            teamData[key].punters[name] = { punts: [], total_punt_points: 0 };
+                        }
+                        let puntPts = 0;
+                        let finalYl = 0;
+                        let netYards = 0;
+                        if (blocked) {
+                            puntPts = -4;
+                            netYards = 0;
+                        } else {
+                            netYards = tb ? gross - 20 : gross - retYds;
+                            puntPts = netYards * PUNT_POINT_MULTIPLIER;
+                            if (tb) {
+                                puntPts += -5;
+                            }
+                            finalYl = tb ? 20 : yl100 - gross + retYds;
+                            if (finalYl <= 10) {
+                                puntPts += 1.5;
+                            } else if (finalYl <= 20) {
+                                puntPts += 0.5;
+                            }
+                            teamData[key].longest_punt_net = Math.max(teamData[key].longest_punt_net, netYards);
+                        }
+                        teamData[key].punters[name].punts.push({ gross, retYds, blocked, tb, finalYl, pts: puntPts, timestamp, net: netYards });
+                        teamData[key].punters[name].total_punt_points += puntPts;
+                        teamData[key].punt_points += puntPts;
+                        teamData[key].total_points += puntPts;
+                    }
                 }
             });
-
             return Object.values(teamData)
                 .filter(item => Object.keys(item.kickers).length > 0 || Object.keys(item.punters).length > 0)
                 .map(item => {
                     const kickPlayersStr = Object.entries(item.kickers)
-                        .map(([name, data]) => `${name} (${data.distances.join(', ')})`).join(', ') || '-';
-                    
+                        .map(([name, data]) => {
+                            let distances = [];
+                            if (data.fg_made.length > 0) {
+                                distances.push(...data.fg_made.map(d => d.toString()));
+                            }
+                            if (data.exp_good > 0) {
+                                distances.push(`EXP ${data.exp_good}`);
+                            }
+                            let mainStr = `${name}`;
+                            if (distances.length > 0) {
+                                mainStr += ` (${distances.join(', ')})`;
+                            }
+                            let missedStr = '';
+                            if (data.fg_missed.length > 0 || data.exp_missed > 0) {
+                                let missedDist = [];
+                                if (data.fg_missed.length > 0) {
+                                    missedDist.push(...data.fg_missed.map(d => `missed ${d}`));
+                                }
+                                if (data.exp_missed > 0) {
+                                    missedDist.push(`missed EXP ${data.exp_missed}`);
+                                }
+                                missedStr = ` (${missedDist.join(', ')})`;
+                            }
+                            mainStr += missedStr;
+                            mainStr += ` → ${data.total_kick_points.toFixed(1)} pts`;
+                            return mainStr;
+                        })
+                        .filter(str => str.length > 0)
+                        .join(', ') || '-';
+                
                     const puntPlayersStr = Object.entries(item.punters)
-                        .map(([name, data]) => `${name} (${data.distances.join(', ')})`).join(', ') || '-';
-
+                        .map(([name, data]) => `${name} (${data.punts.map(p => p.gross).join(', ')}) → ${data.total_punt_points.toFixed(1)} pts`)
+                        .join(', ') || '-';
                     return {
                         posteam: item.posteam,
-                        kick_points: item.kick_points,
-                        punt_points: item.punt_points,
-                        total_points: item.total_points,
+                        index: 0, // Will be set later
+                        kick_points: item.kick_points.toFixed(1),
+                        punt_points: item.punt_points.toFixed(1),
+                        total_points: item.total_points.toFixed(1),
+                        longest_fg: item.longest_fg,
+                        longest_punt_net: item.longest_punt_net,
+                        tiebreaker: item.longest_fg,
                         kick_players: kickPlayersStr,
-                        punt_players: puntPlayersStr
+                        punt_players: puntPlayersStr,
+                        kickers: item.kickers,
+                        punters: item.punters,
+                        wallet: ''
                     };
                 });
         };
-
-        // Always sort by total_points descending
+       
         const sortDataByTotalPoints = (data) => {
-            return [...data].sort((a, b) => parseFloat(b.total_points) - parseFloat(a.total_points));
+            return [...data].sort((a, b) => {
+                const pointsA = parseFloat(a.total_points);
+                const pointsB = parseFloat(b.total_points);
+                if (pointsA !== pointsB) {
+                    return pointsB - pointsA;
+                }
+                const tieA = a.longest_fg > 0 ? a.longest_fg : 0;
+                const tieB = b.longest_fg > 0 ? b.longest_fg : 0;
+                return tieB - tieA;
+            });
         };
-
+       
+        const PuntDetails = ({ punters }) => {
+            const [expanded, setExpanded] = useState(false);
+            if (Object.keys(punters).length === 0) return null;
+            return (
+                <div className="mt-2">
+                    <button
+                        onClick={() => setExpanded(!expanded)}
+                        className="text-purple-400 hover:text-purple-300 text-sm"
+                        aria-expanded={expanded}
+                        aria-controls="punt-details"
+                    >
+                        {expanded ? '▼ Hide Punt Details' : '▶ Show Punt Details'}
+                    </button>
+                    {expanded && (
+                        <ul id="punt-details" className="list-none pl-4 text-xs text-gray-300 mt-1 space-y-1">
+                            {Object.entries(punters).flatMap(([name, data]) =>
+                                data.punts.map((p, idx) => {
+                                    let note = '';
+                                    if (p.blocked) note = 'blocked';
+                                    else if (p.tb) note = 'touchback';
+                                    else if (p.finalYl <= 10) note = 'inside 10';
+                                    else if (p.finalYl <= 20) note = 'inside 20';
+                                    return (
+                                        <li key={`${name}-${idx}`} className="flex justify-between items-center border-l-2 border-purple-500 pl-2">
+                                            <span>{p.timestamp} - {p.gross}yd gross ({p.net.toFixed(1)} net), {p.retYds} ret {note ? `(${note})` : ''}</span>
+                                            <span className="text-purple-400 font-medium">({p.pts.toFixed(2)} pts)</span>
+                                        </li>
+                                    );
+                                })
+                            )}
+                        </ul>
+                    )}
+                </div>
+            );
+        };
+       
         const TopTeams = ({ topTeams }) => {
             if (!topTeams.length) return null;
             return (
                 <div className="mb-6">
-                    <div className="flex flex-col md:flex-row gap-6 justify-center">
+                    <div className="flex flex-col md:flex-row gap-6 justify-center flex-wrap">
                         {topTeams.map((team, idx) => {
-                            const cardClass = idx === 0 ? 'gold-card' : 
-                                            idx === 1 ? 'silver-card' : 
+                            const cardClass = idx === 0 ? 'gold-card' :
+                                            idx === 1 ? 'silver-card' :
                                             'bronze-card';
+                            const walletClass = idx === 0 ? 'wallet-gold' :
+                                              idx === 1 ? 'wallet-silver' :
+                                              'wallet-bronze';
+                            const wallet = getWalletAddress(idx);
+                            const logoRef = useRef(null);
+                            
+                            const handleCardMouseEnter = () => {
+                                if (logoRef.current) {
+                                    logoRef.current.classList.add('pulse');
+                                }
+                            };
+                            
+                            const handleCardMouseLeave = () => {
+                                if (logoRef.current) {
+                                    logoRef.current.classList.remove('pulse');
+                                }
+                            };
+                            
                             return (
-                                <div key={idx} className={`relative bg-gray-800 rounded-xl p-6 w-full md:w-[450px] shadow-xl ${cardClass}`}>
+                                <div 
+                                    key={idx} 
+                                    className={`relative glass-effect rounded-xl p-6 w-full max-w-md md:max-w-none md:w-[450px] shadow-xl ${cardClass} mx-auto md:mx-0 cursor-pointer`}
+                                    onMouseEnter={handleCardMouseEnter}
+                                    onMouseLeave={handleCardMouseLeave}
+                                >
+                                    <div className="text-center mb-4">
+                                        <div className={`wallet-address-top ${walletClass}`}>{wallet}</div>
+                                    </div>
                                     <div className="flex flex-col items-center space-y-6">
-                                        {/* Logo and Points side by side, centered */}
                                         <div className="flex items-center justify-center gap-6">
-                                            <img src={getTeamLogo(team.posteam)} alt={team.posteam} className="w-32 h-32 flex-shrink-0" />
+                                            <img 
+                                                ref={logoRef}
+                                                loading="lazy" 
+                                                src={getTeamLogo(team.posteam)} 
+                                                alt={`${team.posteam} logo`} 
+                                                className="team-logo team-logo-top w-24 h-24 flex-shrink-0" 
+                                            />
                                             <div className="text-center">
-                                                <div className="text-8xl font-thin leading-none tracking-wider text-purple-400">
+                                                <div className="text-7xl font-thin leading-none tracking-wider text-purple-400">
                                                     {team.total_points}
                                                 </div>
-                                                <div className="text-base text-gray-400 uppercase tracking-wide font-light">PTS</div>
+                                                <div className="text-sm text-gray-400 uppercase tracking-wide font-light">PTS</div>
                                             </div>
                                         </div>
-                                        
-                                        <div className="w-full space-y-3">
-                                            <div className="bg-gray-700 p-3 rounded-lg text-base font-medium text-center">{team.kick_players}</div>
-                                            {team.punt_players !== '-' && <div className="bg-gray-700 p-3 rounded-lg text-base font-medium text-center">{team.punt_players}</div>}
+                                        <div className="w-full space-y-3 text-center">
+                                            {team.kick_players !== '-' && <div className="glass-effect p-3 rounded-lg text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis">{team.kick_players}</div>}
+                                            {team.punt_players !== '-' && <div className="glass-effect p-3 rounded-lg text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis">{team.punt_players}</div>}
+                                            {team.punt_players !== '-' && <PuntDetails punters={team.punters} />}
                                         </div>
                                     </div>
                                 </div>
@@ -268,124 +724,228 @@
                 </div>
             );
         };
-
+       
         const Leaderboard = ({ data }) => {
-            // Skip top 3 teams in detailed table
-            const detailData = data.slice(3);
-            
+            const detailData = data.slice(3).map((team, idx) => ({
+                ...team,
+                index: idx + 4
+            }));
+            const logoRefs = useRef({});
+        
+            const handleRowMouseEnter = (teamAbbrev) => {
+                if (logoRefs.current[teamAbbrev]) {
+                    logoRefs.current[teamAbbrev].classList.add('pulse');
+                }
+            };
+        
+            const handleRowMouseLeave = (teamAbbrev) => {
+                if (logoRefs.current[teamAbbrev]) {
+                    logoRefs.current[teamAbbrev].classList.remove('pulse');
+                }
+            };
+        
             return (
                 <div className="overflow-x-auto">
-                    <table className="w-full border-collapse bg-gray-800 rounded-xl shadow-lg">
-                        <thead>
-                            <tr className="bg-gray-700 text-purple-400">
-                                <th className="p-4 text-center font-semibold text-lg border-b-2 border-gray-600">Team</th>
-                                <th className="p-4 text-center font-semibold text-lg border-b-2 border-gray-600">Kick Points</th>
-                                <th className="p-4 text-center font-semibold text-lg border-b-2 border-gray-600">Punt Points</th>
-                                <th className="p-4 text-center font-semibold text-lg border-b-2 border-gray-600">Total Points</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {detailData.map((row, index) => (
-                                <tr key={row.posteam} className="hover:bg-gray-700 border-b border-gray-700">
-                                    <td className="p-4 flex justify-center items-center">
-                                        <img src={getTeamLogo(row.posteam)} alt={row.posteam} className="w-16 h-16" />
-                                    </td>
-                                    <td className="p-4 text-center">
-                                        <div className="break-words text-base font-medium tooltip inline-block">
-                                            {row.kick_players}
-                                            <span className="tooltiptext">Field Goal: 3 pts | Extra Point: 1 pt<br/>(Scoring TBD)</span>
-                                        </div>
-                                    </td>
-                                    <td className="p-4 text-center">
-                                        <div className="break-words text-base font-medium tooltip inline-block">
-                                            {row.punt_players}
-                                            <span className="tooltiptext">Punt scoring TBD<br/>(Inside 20, net avg, etc.)</span>
-                                        </div>
-                                    </td>
-                                    <td className="p-4 font-bold text-xl text-purple-400 text-center">{row.total_points}</td>
+                    <div className="glass-effect rounded-xl shadow-lg overflow-hidden">
+                        <table className="w-full border-collapse table-auto" aria-label="Leaderboard Table">
+                            <thead>
+                                <tr className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm">
+                                    <th className="p-4 text-left font-semibold text-lg text-purple-300 border-b border-white/10">Player/Wallet</th>
+                                    <th className="p-4 text-center font-semibold text-lg text-purple-300 border-b border-white/10">Team</th>
+                                    <th className="p-4 text-center font-semibold text-lg text-purple-300 border-b border-white/10">Kick Points</th>
+                                    <th className="p-4 text-center font-semibold text-lg text-purple-300 border-b border-white/10">Punt Points</th>
+                                    <th className="p-4 text-center font-semibold text-lg text-purple-300 border-b border-white/10">Total Points</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {detailData.map((row) => {
+                                    const wallet = getWalletAddress(row.index);
+                                    return (
+                                        <tr 
+                                            key={row.posteam} 
+                                            className="hover:bg-white/5 border-b border-white/5 transition-colors cursor-pointer"
+                                            onMouseEnter={() => handleRowMouseEnter(row.posteam)}
+                                            onMouseLeave={() => handleRowMouseLeave(row.posteam)}
+                                        >
+                                            <td className="p-4 text-center">
+                                                <div className="wallet-address-table">{wallet}</div>
+                                            </td>
+                                            <td className="p-4 flex justify-center items-center">
+                                                <img 
+                                                    ref={el => { if (el) logoRefs.current[row.posteam] = el; }}
+                                                    loading="lazy" 
+                                                    src={getTeamLogo(row.posteam)} 
+                                                    alt={`${row.posteam} logo`} 
+                                                    className="team-logo team-logo-leaderboard w-16 h-16" 
+                                                />
+                                            </td>
+                                            <td className="p-4 text-center">
+                                                <div className="break-words text-sm font-medium max-w-full text-gray-300">
+                                                    {row.kick_players}
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-center">
+                                                <div className="break-words text-sm font-medium max-w-full text-gray-300">
+                                                    {row.punt_players}
+                                                </div>
+                                                <PuntDetails punters={row.punters} />
+                                            </td>
+                                            <td className="p-4 font-bold text-xl text-purple-400 text-center">{row.total_points}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             );
         };
-
+       
         const App = () => {
             const [rawData, setRawData] = useState([]);
-            const [data, setData] = useState([]);
             const [allWeeks, setAllWeeks] = useState([]);
             const [weekFilter, setWeekFilter] = useState('7');
             const [error, setError] = useState(null);
             const [loading, setLoading] = useState(true);
-
-            // Load raw data once
+           
+            // Update header week selector
             useEffect(() => {
-                Papa.parse('/kp_2025.csv', {
-                    download: true,
-                    header: true,
-                    complete: (results) => {
-                        const cleanData = results.data
-                            .filter(row => row.week && row.week !== 'undefined' && row.week !== '');
+                const headerSelect = document.getElementById('header-week-select');
+                if (headerSelect) {
+                    // Clear existing options
+                    headerSelect.innerHTML = '';
+                   
+                    // Add options
+                    allWeeks.forEach(week => {
+                        const option = document.createElement('option');
+                        option.value = week;
+                        option.textContent = `Week ${week}`;
+                        if (week === weekFilter) {
+                            option.selected = true;
+                        }
+                        headerSelect.appendChild(option);
+                    });
+                   
+                    // Add event listener
+                    const handleChange = (e) => {
+                        setWeekFilter(e.target.value);
+                    };
+                   
+                    headerSelect.addEventListener('change', handleChange);
+                   
+                    // Cleanup
+                    return () => {
+                        headerSelect.removeEventListener('change', handleChange);
+                    };
+                }
+            }, [allWeeks, weekFilter]);
+           
+            useEffect(() => {
+                const loadData = async () => {
+                    try {
+                        const response = await fetch('/kp_2025.csv');
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const csvText = await response.text();
+                        const results = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+                      
+                        if (results.errors.length > 0) {
+                            throw new Error(`CSV parsing errors: ${results.errors.map(e => e.message).join(', ')}`);
+                        }
+                        const cleanData = results.data.filter(row => {
+                            const week = row.week;
+                            return week && week !== 'undefined' && week !== '' &&
+                                   row.play_type && row.posteam;
+                        });
                         setRawData(cleanData);
-                        
+                    
                         const weeks = [...new Set(cleanData.map(row => String(row.week)))].sort((a, b) => parseInt(b) - parseInt(a));
                         setAllWeeks(weeks);
-                        
-                        const initialWeek = weeks.includes('7') ? '7' : weeks[0];
+                    
+                        const initialWeek = weeks.includes('7') ? '7' : weeks[0] || '';
                         setWeekFilter(initialWeek);
-                        
+                    
                         setError(null);
-                        setLoading(false);
-                    },
-                    error: (error) => {
-                        console.error('Error loading CSV:', error);
-                        setError('Error loading data');
+                    } catch (err) {
+                        console.error('Error loading CSV:', err);
+                        setError(`Failed to load data: ${err.message}. Check if columns like 'week', 'play_type', 'posteam' exist.`);
+                    } finally {
                         setLoading(false);
                     }
-                });
+                };
+                loadData();
             }, []);
-
-            // Filter and aggregate data when weekFilter changes
-            useEffect(() => {
-                if (rawData.length === 0) return;
-
-                const filteredData = loadAndFilterData(rawData, weekFilter);
-                const aggregated = aggregateTeamData(filteredData);
-                const sorted = sortDataByTotalPoints(aggregated);
-                setData(sorted);
+           
+            const filteredData = useMemo(() => {
+                if (rawData.length === 0 || !weekFilter) return [];
+                return filterDataByWeek(rawData, weekFilter);
             }, [rawData, weekFilter]);
-
-            const topTeams = data.slice(0, 3);
-
+           
+            const aggregatedData = useMemo(() => {
+                let data = aggregateTeamData(filteredData);
+                // Add wallet addresses and ranking
+                return data.map((team, idx) => ({
+                    ...team,
+                    index: idx,
+                    wallet: getWalletAddress(idx)
+                }));
+            }, [filteredData]);
+           
+            const sortedData = useMemo(() => {
+                return sortDataByTotalPoints(aggregatedData);
+            }, [aggregatedData]);
+           
+            const topTeams = sortedData.slice(0, 3);
+           
             return (
-                <div className="max-w-[1500px] mx-auto p-5">
-                    <h1 className="text-3xl md:text-4xl font-bold text-center text-purple-400 mb-8 tracking-wide">NFL Kickers & Punters 2025 Leaderboard</h1>
-                    <div className="flex justify-center mb-8">
-                        <select
-                            className="bg-purple-600 text-white border-2 border-purple-500 rounded-xl p-3 text-xl font-bold shadow-lg hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:border-purple-500 transition-all duration-200 w-[450px] text-center h-14"
-                            value={weekFilter}
-                            onChange={(e) => setWeekFilter(e.target.value)}
-                        >
-                            {allWeeks.map(week => (
-                                <option key={week} value={week} className="text-lg">Week {week}</option>
-                            ))}
-                        </select>
+                <main className="pt-20 pb-20">
+                    <div className="max-w-[1500px] mx-auto px-5">
+                        <TopTeams topTeams={topTeams} />
+                      
+                        <div id="rules" className="text-center mb-8">
+                            <div className="glass-effect rounded-xl p-6 max-w-4xl mx-auto">
+                                <h3 className="text-xl font-bold text-purple-400 mb-6 text-center">How Points are Calculated</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                                    <div className="text-center">
+                                        <h4 className="text-lg font-bold text-purple-300 mb-3">KICKER SCORING</h4>
+                                        <p className="text-base text-gray-300 mb-1">PAT made: +1 pt</p>
+                                        <p className="text-base text-gray-300 mb-1">FG: 0.1 pt per yard (45yd FG = 4.5 pts)</p>
+                                        <p className="text-base text-gray-300">Missed PAT/FG: 0 pts</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <h4 className="text-lg font-bold text-purple-300 mb-3">PUNTER SCORING</h4>
+                                        <p className="text-base text-gray-300 mb-1">0.05 pts per net yard (gross - return yards)</p>
+                                        <p className="text-base text-gray-300 mb-1">Inside 20: +0.5 pts | Inside 10: +1.5 pts</p>
+                                        <p className="text-base text-gray-300">Touchback: -5 pts | Block: -4 pts</p>
+                                    </div>
+                                </div>
+                                <div className="mt-6 pt-4 border-t border-white/10 text-center">
+                                    <h4 className="text-lg font-bold text-purple-300 mb-2">TIEBREAKER</h4>
+                                    <p className="text-base text-gray-300">Longest FG made</p>
+                                </div>
+                            </div>
+                        </div>
+                        {loading ? (
+                            <div className="glass-effect rounded-xl p-12 text-center">
+                                <p className="text-gray-400 text-lg">Loading degen picks...</p>
+                            </div>
+                        ) : error ? (
+                            <div className="glass-effect rounded-xl p-12 text-center">
+                                <p className="text-red-400 text-lg font-semibold">{error}</p>
+                            </div>
+                        ) : sortedData.length === 0 ? (
+                            <div className="glass-effect rounded-xl p-12 text-center">
+                                <p className="text-gray-400 text-lg">No data available for Week {weekFilter}</p>
+                            </div>
+                        ) : (
+                            <Leaderboard data={sortedData} />
+                        )}
                     </div>
-                    <TopTeams topTeams={topTeams} />
-                    {loading ? (
-                        <p className="text-gray-400 text-center text-lg">Loading...</p>
-                    ) : error ? (
-                        <p className="text-red-500 text-center text-lg font-semibold">{error}</p>
-                    ) : data.length === 0 ? (
-                        <p className="text-gray-400 text-center text-lg">No data for this week</p>
-                    ) : (
-                        <Leaderboard data={data} />
-                    )}
-                </div>
+                </main>
             );
         };
-
+       
         const container = document.getElementById('root');
         const root = createRoot(container);
         root.render(<App />);
