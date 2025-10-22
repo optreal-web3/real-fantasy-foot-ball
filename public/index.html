@@ -277,8 +277,9 @@
                     </div>
                 </div>
                
-                <!-- Centered Week Selector -->
-                <div class="hidden lg:flex items-center justify-center flex-shrink-0 mx-auto lg:mx-0">
+                <!-- Centered Week Selector with Season Label -->
+                <div class="hidden lg:flex items-center justify-center flex-shrink-0 mx-auto lg:mx-0 gap-2">
+                    <span class="text-purple-300 font-semibold text-sm">2025 Season:</span>
                     <select
                         id="header-week-select"
                         class="header-week-select appearance-none"
@@ -662,7 +663,7 @@
             if (!topTeams.length) return null;
             return (
                 <div className="mb-6">
-                    <div className="flex flex-col md:flex-row gap-6 justify-center flex-wrap">
+                    <div class="flex flex-col md:flex-row gap-6 justify-center flex-wrap">
                         {topTeams.map((team, idx) => {
                             const cardClass = idx === 0 ? 'gold-card' :
                                             idx === 1 ? 'silver-card' :
