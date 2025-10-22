@@ -165,16 +165,6 @@
             0%, 100% { box-shadow: 0 0 15px rgba(205, 127, 50, 0.2), 0 0 30px rgba(205, 127, 50, 0.1); }
             50% { box-shadow: 0 0 25px rgba(205, 127, 50, 0.4), 0 0 40px rgba(205, 127, 50, 0.2); }
         }
-
-        /* Team gradient */
-        .team-gradient {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            transition: all 0.3s ease;
-        }
-        .team-gradient:hover {
-            box-shadow: 0 0 20px var(--primary-color);
-        }
-
         @media (max-width: 768px) {
             table {
                 font-size: 0.875rem;
@@ -345,38 +335,38 @@
        
         // Team colors
         const teamColors = {
-            'ARI': { primary: '#000000', secondary: '#97233F' }, // Cardinals: Black to Red
-            'ATL': { primary: '#A6192E', secondary: '#000000' }, // Falcons: Red to Black
-            'BAL': { primary: '#241773', secondary: '#9B1D64' }, // Ravens: Purple to Metallic Silver
-            'BUF': { primary: '#00338D', secondary: '#C60C30' }, // Bills: Royal Blue to Red
-            'CAR': { primary: '#101820', secondary: '#0085CA' }, // Panthers: Black to Panther Blue
-            'CHI': { primary: '#0B162A', secondary: '#C83803' }, // Bears: Navy to Burnt Orange
-            'CIN': { primary: '#000000', secondary: '#F04323' }, // Bengals: Black to Orange
-            'CLE': { primary: '#311D00', secondary: '#FF3C00' }, // Browns: Seal Brown to Orange
-            'DAL': { primary: '#003594', secondary: '#B0B7BC' }, // Cowboys: Navy to Silver-Green
-            'DEN': { primary: '#002244', secondary: '#FB4F27' }, // Broncos: Navy to Orange
-            'DET': { primary: '#0076B6', secondary: '#C1D32F' }, // Lions: Honolulu Blue to Silver
-            'GB': { primary: '#203731', secondary: '#FFB612' }, // Packers: Dark Green to Gold
-            'HOU': { primary: '#03202C', secondary: '#A6192E' }, // Texans: Deep Steel Blue to Battle Red
-            'IND': { primary: '#002D62', secondary: '#A5ACAF' }, // Colts: Indianapolis Blue to Horseshoe White (gray)
-            'JAX': { primary: '#101820', secondary: '#D7A022' }, // Jaguars: Black to Gold
-            'KC': { primary: '#E31837', secondary: '#FFB81C' }, // Chiefs: Red to Gold
-            'LV': { primary: '#000000', secondary: '#A5ACAF' }, // Raiders: Black to Silver
-            'LAC': { primary: '#002244', secondary: '#0080C6' }, // Chargers: Powder Blue (navy base) to Bolt Blue
-            'LAR': { primary: '#002244', secondary: '#A6192E' }, // Rams: Navy to Rams Gold (red approx)
-            'MIA': { primary: '#008E97', secondary: '#F5811F' }, // Dolphins: Aqua to Orange
-            'MIN': { primary: '#4F2A1D', secondary: '#B0B7BC' }, // Vikings: Purple to Gold (gray approx)
-            'NE': { primary: '#002244', secondary: '#C60C30' }, // Patriots: Nautical Blue to Red
-            'NO': { primary: '#9F8958', secondary: '#000000' }, // Saints: Old Gold to Black
-            'NYG': { primary: '#0B2265', secondary: '#A6192E' }, // Giants: Dark Blue to Red
-            'NYJ': { primary: '#1250A3', secondary: '#000000' }, // Jets: Saxon Blue to Green (black approx)
-            'PHI': { primary: '#004C54', secondary: '#A5ACAF' }, // Eagles: Midnight Green to Silver
-            'PIT': { primary: '#000000', secondary: '#FFB612' }, // Steelers: Black to Gold
-            'SEA': { primary: '#002244', secondary: '#69BE28' }, // Seahawks: College Navy to Action Green
-            'SF': { primary: '#AA0000', secondary: '#B3995D' }, // 49ers: Red to Gold
-            'TB': { primary: '#D50A0A', secondary: '#343097' }, // Buccaneers: Red to Pewter
-            'TEN': { primary: '#0C2340', secondary: '#FDB827' }, // Titans: Titans Blue to Red (gold)
-            'WAS': { primary: '#773141', secondary: '#FFB612' }  // Commanders: Burgundy to Gold
+            'ARI': { primary: '#000000' }, // Cardinals: Black
+            'ATL': { primary: '#A6192E' }, // Falcons: Red
+            'BAL': { primary: '#241773' }, // Ravens: Purple
+            'BUF': { primary: '#00338D' }, // Bills: Royal Blue
+            'CAR': { primary: '#101820' }, // Panthers: Black
+            'CHI': { primary: '#0B162A' }, // Bears: Navy
+            'CIN': { primary: '#000000' }, // Bengals: Black
+            'CLE': { primary: '#311D00' }, // Browns: Seal Brown
+            'DAL': { primary: '#003594' }, // Cowboys: Navy
+            'DEN': { primary: '#002244' }, // Broncos: Navy
+            'DET': { primary: '#0076B6' }, // Lions: Honolulu Blue
+            'GB': { primary: '#203731' }, // Packers: Dark Green
+            'HOU': { primary: '#03202C' }, // Texans: Deep Steel Blue
+            'IND': { primary: '#002D62' }, // Colts: Indianapolis Blue
+            'JAX': { primary: '#101820' }, // Jaguars: Black
+            'KC': { primary: '#E31837' }, // Chiefs: Red
+            'LV': { primary: '#000000' }, // Raiders: Black
+            'LAC': { primary: '#002244' }, // Chargers: Powder Blue (navy base)
+            'LAR': { primary: '#002244' }, // Rams: Navy
+            'MIA': { primary: '#008E97' }, // Dolphins: Aqua
+            'MIN': { primary: '#4F2A1D' }, // Vikings: Purple
+            'NE': { primary: '#002244' }, // Patriots: Nautical Blue
+            'NO': { primary: '#9F8958' }, // Saints: Old Gold
+            'NYG': { primary: '#0B2265' }, // Giants: Dark Blue
+            'NYJ': { primary: '#1250A3' }, // Jets: Saxon Blue
+            'PHI': { primary: '#004C54' }, // Eagles: Midnight Green
+            'PIT': { primary: '#000000' }, // Steelers: Black
+            'SEA': { primary: '#002244' }, // Seahawks: College Navy
+            'SF': { primary: '#AA0000' }, // 49ers: Red
+            'TB': { primary: '#D50A0A' }, // Buccaneers: Red
+            'TEN': { primary: '#0C2340' }, // Titans: Titans Blue
+            'WAS': { primary: '#773141' }  // Commanders: Burgundy
         };
        
         // Constants for point calculations
@@ -622,15 +612,17 @@
                             return (
                                 <div 
                                     key={idx} 
-                                    className={`relative glass-effect rounded-xl p-6 w-full max-w-md md:max-w-none md:w-[450px] shadow-xl ${cardClass} team-gradient mx-auto md:mx-0 cursor-pointer`} 
-                                    style={{'--primary-color': teamColors[getTeamAbbr(team.posteam)]?.primary || '#000', '--secondary-color': teamColors[getTeamAbbr(team.posteam)]?.secondary || '#fff'}}
+                                    className={`relative glass-effect rounded-xl p-6 w-full max-w-md md:max-w-none md:w-[450px] shadow-xl ${cardClass} mx-auto md:mx-0 cursor-pointer`}
                                 >
                                     <div className="text-center mb-4">
                                         <div className={`wallet-address-top ${walletClass}`}>{wallet}</div>
                                     </div>
                                     <div className="flex flex-col items-center space-y-6">
                                         <div className="flex items-center justify-center gap-6">
-                                            <div className="text-center text-4xl font-bold text-white bg-black/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto team-gradient" style={{'--primary-color': teamColors[getTeamAbbr(team.posteam)]?.primary || '#000', '--secondary-color': teamColors[getTeamAbbr(team.posteam)]?.secondary || '#fff'}}>
+                                            <div 
+                                                className="text-center text-4xl font-bold text-white rounded-full w-24 h-24 flex items-center justify-center mx-auto"
+                                                style={{ backgroundColor: teamColors[getTeamAbbr(team.posteam)]?.primary || '#000' }}
+                                            >
                                                 {getTeamAbbr(team.posteam)}
                                             </div>
                                             <div className="text-center">
@@ -679,14 +671,16 @@
                                     return (
                                         <tr 
                                             key={row.posteam} 
-                                            className="hover:bg-white/5 border-b border-white/5 transition-colors cursor-pointer team-gradient"
-                                            style={{'--primary-color': teamColors[getTeamAbbr(row.posteam)]?.primary || '#000', '--secondary-color': teamColors[getTeamAbbr(row.posteam)]?.secondary || '#fff'}}
+                                            className="hover:bg-white/5 border-b border-white/5 transition-colors cursor-pointer"
                                         >
                                             <td className="p-4 text-center">
                                                 <div className="wallet-address-table">{wallet}</div>
                                             </td>
                                             <td className="p-4 flex justify-center items-center">
-                                                <div className="text-center text-2xl font-bold text-white bg-black/30 rounded w-16 h-16 flex items-center justify-center team-gradient" style={{'--primary-color': teamColors[getTeamAbbr(row.posteam)]?.primary || '#000', '--secondary-color': teamColors[getTeamAbbr(row.posteam)]?.secondary || '#fff'}}>
+                                                <div 
+                                                    className="text-center text-2xl font-bold text-white rounded w-16 h-16 flex items-center justify-center"
+                                                    style={{ backgroundColor: teamColors[getTeamAbbr(row.posteam)]?.primary || '#000' }}
+                                                >
                                                     {getTeamAbbr(row.posteam)}
                                                 </div>
                                             </td>
