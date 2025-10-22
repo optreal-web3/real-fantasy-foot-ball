@@ -37,54 +37,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
       
-        /* Team logo pulse animation - Top cards */
-        .team-logo-top.pulse {
-            animation: logoPulseTop 1.2s ease-in-out infinite;
-            z-index: 10;
-        }
-        @keyframes logoPulseTop {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-                filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0.5));
-            }
-            50% {
-                transform: scale(1.8);
-                opacity: 0.5;
-                filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-                filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0.5));
-            }
-        }
-        
-        /* Team logo pulse animation - Leaderboard rows (no glow) */
-        .team-logo-leaderboard.pulse {
-            animation: logoPulseLeaderboard 1.2s ease-in-out infinite;
-            z-index: 10;
-        }
-        @keyframes logoPulseLeaderboard {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.5);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-      
-        .team-logo {
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform-origin: center;
-        }
-      
         /* Header week selector */
         .header-week-select {
             background: rgba(0, 0, 0, 0.3);
@@ -213,6 +165,16 @@
             0%, 100% { box-shadow: 0 0 15px rgba(205, 127, 50, 0.2), 0 0 30px rgba(205, 127, 50, 0.1); }
             50% { box-shadow: 0 0 25px rgba(205, 127, 50, 0.4), 0 0 40px rgba(205, 127, 50, 0.2); }
         }
+
+        /* Team gradient */
+        .team-gradient {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            transition: all 0.3s ease;
+        }
+        .team-gradient:hover {
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
         @media (max-width: 768px) {
             table {
                 font-size: 0.875rem;
@@ -233,22 +195,6 @@
             .wallet-address-table {
                 font-size: 0.8rem;
                 padding: 0.4rem;
-            }
-            .team-logo-top.pulse {
-                animation: logoPulseTopMobile 1s ease-in-out infinite;
-            }
-            @keyframes logoPulseTopMobile {
-                0% { transform: scale(1); opacity: 1; }
-                50% { transform: scale(1.5); opacity: 0.5; }
-                100% { transform: scale(1); opacity: 1; }
-            }
-            .team-logo-leaderboard.pulse {
-                animation: logoPulseLeaderboardMobile 1s ease-in-out infinite;
-            }
-            @keyframes logoPulseLeaderboardMobile {
-                0% { transform: scale(1); opacity: 1; }
-                50% { transform: scale(1.3); opacity: 0.5; }
-                100% { transform: scale(1); opacity: 1; }
             }
         }
         @media (min-width: 769px) {
@@ -360,7 +306,7 @@
         </div>
     </footer>
     <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
+        const { useState, useEffect, useMemo } = React;
         const { createRoot } = ReactDOM;
        
         // Mock wallet addresses - truncated format: 0xABCDE...FGHIJ
@@ -397,50 +343,50 @@
             '0xe9f0a...9d0e1'
         ];
        
+        // Team colors
+        const teamColors = {
+            'ARI': { primary: '#000000', secondary: '#97233F' }, // Cardinals: Black to Red
+            'ATL': { primary: '#A6192E', secondary: '#000000' }, // Falcons: Red to Black
+            'BAL': { primary: '#241773', secondary: '#9B1D64' }, // Ravens: Purple to Metallic Silver
+            'BUF': { primary: '#00338D', secondary: '#C60C30' }, // Bills: Royal Blue to Red
+            'CAR': { primary: '#101820', secondary: '#0085CA' }, // Panthers: Black to Panther Blue
+            'CHI': { primary: '#0B162A', secondary: '#C83803' }, // Bears: Navy to Burnt Orange
+            'CIN': { primary: '#000000', secondary: '#F04323' }, // Bengals: Black to Orange
+            'CLE': { primary: '#311D00', secondary: '#FF3C00' }, // Browns: Seal Brown to Orange
+            'DAL': { primary: '#003594', secondary: '#B0B7BC' }, // Cowboys: Navy to Silver-Green
+            'DEN': { primary: '#002244', secondary: '#FB4F27' }, // Broncos: Navy to Orange
+            'DET': { primary: '#0076B6', secondary: '#C1D32F' }, // Lions: Honolulu Blue to Silver
+            'GB': { primary: '#203731', secondary: '#FFB612' }, // Packers: Dark Green to Gold
+            'HOU': { primary: '#03202C', secondary: '#A6192E' }, // Texans: Deep Steel Blue to Battle Red
+            'IND': { primary: '#002D62', secondary: '#A5ACAF' }, // Colts: Indianapolis Blue to Horseshoe White (gray)
+            'JAX': { primary: '#101820', secondary: '#D7A022' }, // Jaguars: Black to Gold
+            'KC': { primary: '#E31837', secondary: '#FFB81C' }, // Chiefs: Red to Gold
+            'LV': { primary: '#000000', secondary: '#A5ACAF' }, // Raiders: Black to Silver
+            'LAC': { primary: '#002244', secondary: '#0080C6' }, // Chargers: Powder Blue (navy base) to Bolt Blue
+            'LAR': { primary: '#002244', secondary: '#A6192E' }, // Rams: Navy to Rams Gold (red approx)
+            'MIA': { primary: '#008E97', secondary: '#F5811F' }, // Dolphins: Aqua to Orange
+            'MIN': { primary: '#4F2A1D', secondary: '#B0B7BC' }, // Vikings: Purple to Gold (gray approx)
+            'NE': { primary: '#002244', secondary: '#C60C30' }, // Patriots: Nautical Blue to Red
+            'NO': { primary: '#9F8958', secondary: '#000000' }, // Saints: Old Gold to Black
+            'NYG': { primary: '#0B2265', secondary: '#A6192E' }, // Giants: Dark Blue to Red
+            'NYJ': { primary: '#1250A3', secondary: '#000000' }, // Jets: Saxon Blue to Green (black approx)
+            'PHI': { primary: '#004C54', secondary: '#A5ACAF' }, // Eagles: Midnight Green to Silver
+            'PIT': { primary: '#000000', secondary: '#FFB612' }, // Steelers: Black to Gold
+            'SEA': { primary: '#002244', secondary: '#69BE28' }, // Seahawks: College Navy to Action Green
+            'SF': { primary: '#AA0000', secondary: '#B3995D' }, // 49ers: Red to Gold
+            'TB': { primary: '#D50A0A', secondary: '#343097' }, // Buccaneers: Red to Pewter
+            'TEN': { primary: '#0C2340', secondary: '#FDB827' }, // Titans: Titans Blue to Red (gold)
+            'WAS': { primary: '#773141', secondary: '#FFB612' }  // Commanders: Burgundy to Gold
+        };
+       
         // Constants for point calculations
         const PUNT_POINT_MULTIPLIER = 0.05;
         const FG_POINT_MULTIPLIER = 0.1;
         const PAT_POINT = 1;
        
-        // ESPN team logos
-        const teamLogos = {
-            'ARI': 'https://a.espncdn.com/i/teamlogos/nfl/500/ari.png',
-            'ATL': 'https://a.espncdn.com/i/teamlogos/nfl/500/atl.png',
-            'BAL': 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png',
-            'BUF': 'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png',
-            'CAR': 'https://a.espncdn.com/i/teamlogos/nfl/500/car.png',
-            'CHI': 'https://a.espncdn.com/i/teamlogos/nfl/500/chi.png',
-            'CIN': 'https://a.espncdn.com/i/teamlogos/nfl/500/cin.png',
-            'CLE': 'https://a.espncdn.com/i/teamlogos/nfl/500/cle.png',
-            'DAL': 'https://a.espncdn.com/i/teamlogos/nfl/500/dal.png',
-            'DEN': 'https://a.espncdn.com/i/teamlogos/nfl/500/den.png',
-            'DET': 'https://a.espncdn.com/i/teamlogos/nfl/500/det.png',
-            'GB': 'https://a.espncdn.com/i/teamlogos/nfl/500/gb.png',
-            'HOU': 'https://a.espncdn.com/i/teamlogos/nfl/500/hou.png',
-            'IND': 'https://a.espncdn.com/i/teamlogos/nfl/500/ind.png',
-            'JAX': 'https://a.espncdn.com/i/teamlogos/nfl/500/jax.png',
-            'KC': 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png',
-            'LV': 'https://a.espncdn.com/i/teamlogos/nfl/500/lv.png',
-            'LAC': 'https://a.espncdn.com/i/teamlogos/nfl/500/lac.png',
-            'LAR': 'https://a.espncdn.com/i/teamlogos/nfl/500/lar.png',
-            'MIA': 'https://a.espncdn.com/i/teamlogos/nfl/500/mia.png',
-            'MIN': 'https://a.espncdn.com/i/teamlogos/nfl/500/min.png',
-            'NE': 'https://a.espncdn.com/i/teamlogos/nfl/500/ne.png',
-            'NO': 'https://a.espncdn.com/i/teamlogos/nfl/500/no.png',
-            'NYG': 'https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png',
-            'NYJ': 'https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png',
-            'PHI': 'https://a.espncdn.com/i/teamlogos/nfl/500/phi.png',
-            'PIT': 'https://a.espncdn.com/i/teamlogos/nfl/500/pit.png',
-            'SEA': 'https://a.espncdn.com/i/teamlogos/nfl/500/sea.png',
-            'SF': 'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png',
-            'TB': 'https://a.espncdn.com/i/teamlogos/nfl/500/tb.png',
-            'TEN': 'https://a.espncdn.com/i/teamlogos/nfl/500/ten.png',
-            'WAS': 'https://a.espncdn.com/i/teamlogos/nfl/500/was.png'
-        };
-       
-        const getTeamLogo = (teamAbbrev) => {
-            if (teamAbbrev === 'LA') return teamLogos['LAR'];
-            return teamLogos[teamAbbrev] || 'https://via.placeholder.com/64x64?text=?';
+        const getTeamAbbr = (teamAbbrev) => {
+            if (teamAbbrev === 'LA') return 'LAR';
+            return teamAbbrev || '?';
         };
        
         const getWalletAddress = (index) => {
@@ -672,39 +618,21 @@
                                               idx === 1 ? 'wallet-silver' :
                                               'wallet-bronze';
                             const wallet = getWalletAddress(idx);
-                            const logoRef = useRef(null);
-                            
-                            const handleCardMouseEnter = () => {
-                                if (logoRef.current) {
-                                    logoRef.current.classList.add('pulse');
-                                }
-                            };
-                            
-                            const handleCardMouseLeave = () => {
-                                if (logoRef.current) {
-                                    logoRef.current.classList.remove('pulse');
-                                }
-                            };
                             
                             return (
                                 <div 
                                     key={idx} 
-                                    className={`relative glass-effect rounded-xl p-6 w-full max-w-md md:max-w-none md:w-[450px] shadow-xl ${cardClass} mx-auto md:mx-0 cursor-pointer`}
-                                    onMouseEnter={handleCardMouseEnter}
-                                    onMouseLeave={handleCardMouseLeave}
+                                    className={`relative glass-effect rounded-xl p-6 w-full max-w-md md:max-w-none md:w-[450px] shadow-xl ${cardClass} team-gradient mx-auto md:mx-0 cursor-pointer`} 
+                                    style={{'--primary-color': teamColors[getTeamAbbr(team.posteam)]?.primary || '#000', '--secondary-color': teamColors[getTeamAbbr(team.posteam)]?.secondary || '#fff'}}
                                 >
                                     <div className="text-center mb-4">
                                         <div className={`wallet-address-top ${walletClass}`}>{wallet}</div>
                                     </div>
                                     <div className="flex flex-col items-center space-y-6">
                                         <div className="flex items-center justify-center gap-6">
-                                            <img 
-                                                ref={logoRef}
-                                                loading="lazy" 
-                                                src={getTeamLogo(team.posteam)} 
-                                                alt={`${team.posteam} logo`} 
-                                                className="team-logo team-logo-top w-24 h-24 flex-shrink-0" 
-                                            />
+                                            <div className="text-center text-4xl font-bold text-white bg-black/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto team-gradient" style={{'--primary-color': teamColors[getTeamAbbr(team.posteam)]?.primary || '#000', '--secondary-color': teamColors[getTeamAbbr(team.posteam)]?.secondary || '#fff'}}>
+                                                {getTeamAbbr(team.posteam)}
+                                            </div>
                                             <div className="text-center">
                                                 <div className="text-7xl font-thin leading-none tracking-wider text-purple-400">
                                                     {team.total_points}
@@ -731,19 +659,6 @@
                 ...team,
                 index: idx + 4
             }));
-            const logoRefs = useRef({});
-        
-            const handleRowMouseEnter = (teamAbbrev) => {
-                if (logoRefs.current[teamAbbrev]) {
-                    logoRefs.current[teamAbbrev].classList.add('pulse');
-                }
-            };
-        
-            const handleRowMouseLeave = (teamAbbrev) => {
-                if (logoRefs.current[teamAbbrev]) {
-                    logoRefs.current[teamAbbrev].classList.remove('pulse');
-                }
-            };
         
             return (
                 <div className="overflow-x-auto">
@@ -764,21 +679,16 @@
                                     return (
                                         <tr 
                                             key={row.posteam} 
-                                            className="hover:bg-white/5 border-b border-white/5 transition-colors cursor-pointer"
-                                            onMouseEnter={() => handleRowMouseEnter(row.posteam)}
-                                            onMouseLeave={() => handleRowMouseLeave(row.posteam)}
+                                            className="hover:bg-white/5 border-b border-white/5 transition-colors cursor-pointer team-gradient"
+                                            style={{'--primary-color': teamColors[getTeamAbbr(row.posteam)]?.primary || '#000', '--secondary-color': teamColors[getTeamAbbr(row.posteam)]?.secondary || '#fff'}}
                                         >
                                             <td className="p-4 text-center">
                                                 <div className="wallet-address-table">{wallet}</div>
                                             </td>
                                             <td className="p-4 flex justify-center items-center">
-                                                <img 
-                                                    ref={el => { if (el) logoRefs.current[row.posteam] = el; }}
-                                                    loading="lazy" 
-                                                    src={getTeamLogo(row.posteam)} 
-                                                    alt={`${row.posteam} logo`} 
-                                                    className="team-logo team-logo-leaderboard w-16 h-16" 
-                                                />
+                                                <div className="text-center text-2xl font-bold text-white bg-black/30 rounded w-16 h-16 flex items-center justify-center team-gradient" style={{'--primary-color': teamColors[getTeamAbbr(row.posteam)]?.primary || '#000', '--secondary-color': teamColors[getTeamAbbr(row.posteam)]?.secondary || '#fff'}}>
+                                                    {getTeamAbbr(row.posteam)}
+                                                </div>
                                             </td>
                                             <td className="p-4 text-center">
                                                 <div className="break-words text-sm font-medium max-w-full text-gray-300">
